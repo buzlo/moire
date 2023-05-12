@@ -1,3 +1,5 @@
+<script setup></script>
+
 <template>
   <footer class="footer container">
     <div class="footer__wrapper">
@@ -9,7 +11,7 @@
           <a class="footer__link" href="tel:88006009009"> 8 800 600 90 09 </a>
         </li>
         <li>
-          <a class="footer__link" href="mailto:hi@technozavrrr.com"> hi@technozavrrr.com </a>
+          <a class="footer__link" href="mailto:hi@moire.com"> hi@moire.com </a>
         </li>
         <li>
           <a class="footer__link" href="#"> Распродажа </a>
@@ -76,11 +78,79 @@
         </li>
       </ul>
 
-      <span class="footer__copyright"> © 2020 Moire </span>
+      <span class="footer__copyright"> © 2023 Moire </span>
     </div>
   </footer>
 </template>
 
-<script setup></script>
+<style lang="scss" scoped>
+@import '../styles/variables';
+@import '../styles/mixins';
 
-<style lang="scss" scoped></style>
+.footer {
+  &__wrapper {
+    display: grid;
+    grid-template-columns: 550px 423px;
+    justify-content: space-between;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    border-top: 1px solid #e9e9e9;
+  }
+
+  &__link {
+    font-size: 14px;
+    line-height: 24px;
+    color: $text-main;
+    border-bottom: 2px solid transparent;
+    transition: $transition;
+
+    &:hover,
+    &:focus {
+      border-color: $color-primary;
+    }
+
+    &--medium {
+      font-weight: 500;
+    }
+  }
+
+  &__links {
+    @include ulres;
+
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-gap: 20px 30px;
+  }
+
+  &__desc {
+    margin: 30px 0 37px;
+
+    font-size: 14px;
+    line-height: 24px;
+    color: $text-second;
+  }
+
+  &__social {
+    margin-left: auto;
+    align-self: flex-start;
+  }
+
+  &__copyright {
+    grid-row: 3/4;
+    align-self: flex-end;
+
+    font-size: 12px;
+  }
+
+  &__data {
+    @include ulres;
+
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-gap: 10px;
+    justify-content: space-between;
+    grid-column: 2/3;
+    grid-row: 3/4;
+  }
+}
+</style>

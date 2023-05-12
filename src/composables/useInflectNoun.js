@@ -1,3 +1,10 @@
-export function useInflectNoun(number, forms) {
-  return forms[(number % 100 > 4 && number % 100 < 20) ? 2 : [2, 0, 1, 1, 1, 2][(number % 10 < 5) ? Math.abs(number) % 10 : 5]];
+export function useInflectNoun(number, [nominativeSingular, genitiveSingular, genitivePlural]) {
+  if (number % 100 > 4 && number % 100 < 20) return genitivePlural
+
+  const remainder = number % 10
+  return remainder === 1
+    ? nominativeSingular
+    : remainder > 1 && remainder < 5
+    ? genitiveSingular
+    : genitivePlural
 }

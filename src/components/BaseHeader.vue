@@ -1,3 +1,5 @@
+<script setup></script>
+
 <template>
   <header class="header container">
     <div class="header__wrapper">
@@ -24,7 +26,61 @@
   </header>
 </template>
 
-<script setup>
-</script>
+<style lang="scss" scoped>
+@import '../styles/variables';
+.header {
+  background-color: $bg-second;
 
-<style lang="scss" scoped></style>
+  &__wrapper {
+    display: grid;
+    grid-template-columns: 380px 1fr 300px 25px;
+    grid-column-gap: 40px;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 23px;
+    padding-bottom: 23px;
+    border-bottom: 1px solid #e9e9e9;
+  }
+
+  &__info {
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  &__logo {
+    display: block;
+    width: 190px;
+    height: 33px;
+    margin: 0 auto;
+  }
+
+  &__tel {
+    margin-left: auto;
+
+    font-size: 14px;
+    color: #000;
+  }
+
+  &__cart {
+    position: relative;
+    height: 27px;
+  }
+
+  &__count {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: $color-primary;
+    padding: 3px;
+    min-width: 13px;
+    height: 13px;
+    border-radius: 50%;
+
+    font-size: 7px;
+    line-height: 1;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+  }
+}
+</style>
