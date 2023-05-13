@@ -1,14 +1,14 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useNumberFormat } from '../composables/useNumberFormat'
+import ColorsList from './ColorsList.vue';
 
 const props = defineProps(['product'])
-const colors = computed(() => props.product.colors)
 
 const currentColor = ref(0)
 const currentImg = computed(() => {
   try {
-    return colors.value[currentColor.value].gallery[0].file.url
+    return props.product.colors[currentColor.value].gallery[0].file.url
   } catch (error) {
     console.log(error)
     return null
@@ -31,19 +31,6 @@ const currentImg = computed(() => {
 
     <span class="catalog__price"> {{ useNumberFormat(product.price) }} ₽ </span>
 
-    <ul class="colors colors--black">
-      <li v-for="(color, index) of product.colors" class="colors__item" :key="color.id">
-        <label class="colors__label">
-          <input
-            class="colors__radio sr-only"
-            type="radio"
-            :name="color.color.title"
-            :value="index"
-            v-model="currentColor"
-          />
-          <span class="colors__value" :style="{ backgroundColor: color.color.code }"> </span>
-        </label>
-      </li>
-    </ul>
+    <ColorsList v-model="currentColor" :colors="product.colors"></ColorsList>
   </li>
 </template>

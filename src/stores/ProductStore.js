@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { API_BASE_URL } from '../config'
 
 export const useProductStore = defineStore('products', () => {
   const products = ref([])
@@ -7,9 +8,12 @@ export const useProductStore = defineStore('products', () => {
   const fetchingError = ref(true)
   const productsCount = computed(() => products.value.length)
 
-  async function fill() {
+  async function fill(params) {
     isFetching.value = true
-    products.value = await fetch('https://vue-moire.skillbox.cc/api/products')
+    const url = new URL(`${API_BASE_URL}/products`)
+    url.search = new URLSearchParams(params)
+
+    products.value = await fetch(url)
       .then((response) => response.json())
       .then((parsedRes) => parsedRes.items)
     isFetching.value = false
