@@ -7,11 +7,12 @@ export const useProductStore = defineStore('products', () => {
   const params = reactive({})
   const products = ref([])
   const isFetching = ref(false)
-  const fetchingError = ref(true)
+  const hasFetchingError = ref(true)
   const productsCount = computed(() => products.value.length)
 
   async function fill() {
     isFetching.value = true
+    hasFetchingError.value = false
 
     const searchParams = []
     for (const key in params) {
@@ -24,10 +25,15 @@ export const useProductStore = defineStore('products', () => {
 
     const url = new URL(`${API_BASE_URL}/products`)
     url.search = new URLSearchParams(searchParams)
-    ;[products.value] = await useFetchAll([url], 'items')
+
+    try {
+      [products.value] = await useFetchAll([url], 'items')
+    } catch {
+      hasFetchingError.value = true
+    }
 
     isFetching.value = false
   }
 
-  return { params, products, isFetching, fetchingError, productsCount, fill }
+  return { params, products, isFetching, hasFetchingError, productsCount, fill }
 })

@@ -1,29 +1,58 @@
 <script setup>
-import { computed, toRaw } from 'vue'
+import { computed, ref, reactive, toRaw } from 'vue'
 import { useProductStore } from '../stores/ProductStore'
-import { useFilterStore } from '../stores/FilterStore'
+import { API_BASE_URL } from '../config'
+import { useFetchAll } from '../composables/useFetchAll'
 
 const productStore = useProductStore()
-const filterStore = useFilterStore()
 
-filterStore.fill()
+const categories = ref([])
+const materials = ref([])
+const seasons = ref([])
+const isFetching = ref(false)
+const hasFetchingError = ref(true)
+
+const picked = reactive({
+  fromPrice: null,
+  toPrice: null,
+  category: 0,
+  materials: [],
+  seasons: []
+})
+
+getFilterData()
+
+async function getFilterData() {
+  isFetching.value = true
+  hasFetchingError.value = false
+  try {
+    ;[categories.value, materials.value, seasons.value] = await useFetchAll(
+      [`${API_BASE_URL}/productCategories`, `${API_BASE_URL}/materials`, `${API_BASE_URL}/seasons`],
+      'items'
+    )
+  } catch {
+    hasFetchingError.value = true
+  }
+
+  isFetching.value = false
+}
 
 function onSubmit() {
-  productStore.params.categoryId = filterStore.picked.category
-  productStore.params['materialIds[]'] = toRaw(filterStore.picked.materials)
-  productStore.params['seasonIds[]'] = toRaw(filterStore.picked.seasons)
-  productStore.params.minPrice = filterStore.picked.fromPrice
-  productStore.params.maxPrice = filterStore.picked.toPrice
+  productStore.params.categoryId = picked.category
+  productStore.params['materialIds[]'] = toRaw(picked.materials)
+  productStore.params['seasonIds[]'] = toRaw(picked.seasons)
+  productStore.params.minPrice = picked.fromPrice
+  productStore.params.maxPrice = picked.toPrice
 
   productStore.fill()
 }
 
 function onReset() {
-  filterStore.picked.fromPrice = null
-  filterStore.picked.toPrice = null
-  filterStore.picked.category = 0
-  filterStore.picked.materials = []
-  filterStore.picked.seasons = []
+  picked.fromPrice = null
+  picked.toPrice = null
+  picked.category = 0
+  picked.materials = []
+  picked.seasons = []
   onSubmit()
 }
 
@@ -35,7 +64,14 @@ const maxPrice = computed(() => {
 </script>
 
 <template>
-  <aside class="filter">
+  <div v-if="isFetching">Загрузка фильтра...</div>
+  <div v-else-if="hasFetchingError">
+    <p>При загрузке фильтра произошла ошибка.</p>
+    <button @click.prevent="getFilterData()" class="button button--primary">
+      Попробовать<br />ещё раз
+    </button>
+  </div>
+  <aside v-else class="filter">
     <form @submit.prevent="onSubmit" class="filter__form form" action="#" method="get">
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
@@ -44,7 +80,7 @@ const maxPrice = computed(() => {
             class="form__input"
             type="text"
             name="min-price"
-            v-model.number="filterStore.picked.fromPrice"
+            v-model.number="picked.fromPrice"
             placeholder="0"
           />
           <span class="form__value">От</span>
@@ -54,7 +90,7 @@ const maxPrice = computed(() => {
             class="form__input"
             type="text"
             name="max-price"
-            v-model.number="filterStore.picked.toPrice"
+            v-model.number="picked.toPrice"
             :placeholder="maxPrice"
           />
           <span class="form__value">До</span>
@@ -64,13 +100,9 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category" v-model="filterStore.picked.category">
+          <select class="form__select" type="text" name="category" v-model="picked.category">
             <option :value="0">Все категории</option>
-            <option
-              v-for="category of filterStore.categories"
-              :value="category.id"
-              :key="category.id"
-            >
+            <option v-for="category of categories" :value="category.id" :key="category.id">
               {{ category.title }}
             </option>
           </select>
@@ -80,14 +112,14 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
-          <li v-for="material of filterStore.materials" class="check-list__item" :key="material.id">
+          <li v-for="material of materials" class="check-list__item" :key="material.id">
             <label class="check-list__label">
               <input
                 class="check-list__check sr-only"
                 type="checkbox"
                 name="material"
                 :value="material.id"
-                v-model="filterStore.picked.materials"
+                v-model="picked.materials"
               />
               <span class="check-list__desc">
                 {{ material.title }}
@@ -101,14 +133,14 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
-          <li v-for="season of filterStore.seasons" class="check-list__item" :key="season.id">
+          <li v-for="season of seasons" class="check-list__item" :key="season.id">
             <label class="check-list__label">
               <input
                 class="check-list__check sr-only"
                 type="checkbox"
                 name="collection"
                 :value="season.id"
-                v-model="filterStore.picked.seasons"
+                v-model="picked.seasons"
               />
               <span class="check-list__desc">
                 {{ season.title }}
