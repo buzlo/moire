@@ -100,7 +100,7 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category" v-model="picked.category">
+          <select class="form__select" name="category" v-model="picked.category">
             <option :value="0">Все категории</option>
             <option v-for="category of categories" :value="category.id" :key="category.id">
               {{ category.title }}
@@ -160,6 +160,7 @@ const maxPrice = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@import '../styles/form';
 .filter {
   &__form {
     padding: 0 25px 60px;
