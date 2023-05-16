@@ -1,32 +1,30 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useNumberFormat } from '../composables/useNumberFormat'
-import ColorsList from './ColorsList.vue';
+import ColorsList from './ColorsList.vue'
 
 const props = defineProps(['product'])
 
-const currentColor = ref(props.product.colors[0].id)
+const currentColor = ref(0)
 const currentImg = computed(() => {
   try {
-    return props.product.colors.find(color => color.id === currentColor.value).gallery[0].file.url
+    return props.product.colors[currentColor.value].gallery[0].file.url
   } catch (error) {
     console.log(error)
     return null
   }
 })
-
-
 </script>
 
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <RouterLink :to="{ name: 'item', params: { id: product.id } }" class="catalog__pic" href="#">
       <img :src="currentImg" :alt="product.title" />
       <div v-if="!currentImg">Изображение не найдено</div>
-    </a>
+    </RouterLink>
 
     <h3 class="catalog__title">
-      <a href="#"> {{ product.title }} </a>
+      <RouterLink :to="{ name: 'item', params: { id: product.id } }" href="#"> {{ product.title }} </RouterLink>
     </h3>
 
     <span class="catalog__price"> {{ useNumberFormat(product.price) }} ₽ </span>
