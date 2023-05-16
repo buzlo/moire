@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import { API_BASE_URL } from '../config'
+import { useFetchAll } from '../composables/useFetchAll'
 
 export const useProductStore = defineStore('products', () => {
   const params = reactive({})
@@ -23,10 +24,7 @@ export const useProductStore = defineStore('products', () => {
 
     const url = new URL(`${API_BASE_URL}/products`)
     url.search = new URLSearchParams(searchParams)
-
-    products.value = await fetch(url)
-      .then((response) => response.json())
-      .then((parsedRes) => parsedRes.items)
+    ;[products.value] = await useFetchAll([url], 'items')
 
     isFetching.value = false
   }

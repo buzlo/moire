@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import { API_BASE_URL } from '../config'
+import { useFetchAll } from '../composables/useFetchAll'
 
 export const useFilterStore = defineStore('filterData', () => {
   const categories = ref([])
@@ -20,13 +21,12 @@ export const useFilterStore = defineStore('filterData', () => {
 
   async function fill() {
     isFetching.value = true
-    ;[categories.value, materials.value, seasons.value] = await Promise.all([
-      fetch(`${API_BASE_URL}/productCategories`),
-      fetch(`${API_BASE_URL}/materials`),
-      fetch(`${API_BASE_URL}/seasons`)
-    ])
-      .then(async (responses) => await Promise.all(responses.map((response) => response.json())))
-      .then((parsedResponses) => parsedResponses.map((parsedResponse) => parsedResponse.items))
+    ;[categories.value, materials.value, seasons.value] = await useFetchAll([
+      `${API_BASE_URL}/productCategories`,
+      `${API_BASE_URL}/materials`,
+      `${API_BASE_URL}/seasons`,
+    ], 'items')
+
     isFetching.value = false
   }
 
