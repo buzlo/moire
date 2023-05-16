@@ -15,13 +15,13 @@ const currentColor = computed({
 
 <template>
   <ul class="colors colors--black">
-    <li v-for="(color, index) of colors" class="colors__item" :key="color.id">
+    <li v-for="color of colors" class="colors__item" :key="color.color.id">
       <label class="colors__label">
         <input
           class="colors__radio sr-only"
           type="radio"
           :name="color.color.title"
-          :value="index"
+          :value="color.id"
           v-model="currentColor"
         />
         <span

@@ -5,10 +5,10 @@ import ColorsList from './ColorsList.vue';
 
 const props = defineProps(['product'])
 
-const currentColor = ref(0)
+const currentColor = ref(props.product.colors[0].id)
 const currentImg = computed(() => {
   try {
-    return props.product.colors[currentColor.value].gallery[0].file.url
+    return props.product.colors.find(color => color.id === currentColor.value).gallery[0].file.url
   } catch (error) {
     console.log(error)
     return null
