@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { API_BASE_URL } from '../config'
 
 export const useFilterStore = defineStore('filterData', () => {
@@ -9,6 +9,14 @@ export const useFilterStore = defineStore('filterData', () => {
   const isFetching = ref(false)
   const fetchingError = ref(true)
   const categoriesCount = computed(() => categories.value.length)
+
+  const picked = reactive({
+    fromPrice: null,
+    toPrice: null,
+    category: 0,
+    materials: [],
+    seasons: []
+  })
 
   async function fill() {
     isFetching.value = true
@@ -22,5 +30,14 @@ export const useFilterStore = defineStore('filterData', () => {
     isFetching.value = false
   }
 
-  return { categories, materials, seasons, isFetching, fetchingError, categoriesCount, fill }
+  return {
+    categories,
+    materials,
+    seasons,
+    isFetching,
+    fetchingError,
+    categoriesCount,
+    picked,
+    fill
+  }
 })

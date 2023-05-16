@@ -1,5 +1,5 @@
 <script setup>
-import { ref, shallowRef, computed, toRaw } from 'vue'
+import { computed, toRaw } from 'vue'
 import { useProductStore } from '../stores/ProductStore'
 import { useFilterStore } from '../stores/FilterStore'
 
@@ -8,29 +8,22 @@ const filterStore = useFilterStore()
 
 filterStore.fill()
 
-const fromPrice = ref(null)
-const toPrice = ref(null)
-const pickedCategory = ref(-1)
-const pickedMaterials = shallowRef([])
-const pickedSeasons = shallowRef([])
-
 function onSubmit() {
-  const params = {}
-  if (pickedCategory.value > -1) params.categoryId = pickedCategory.value
-  if (pickedMaterials.value.length > 0) params['materialIds[]'] = pickedMaterials.value
-  if (pickedSeasons.value.length > 0) params['seasonIds[]'] = pickedSeasons.value
-  if (fromPrice.value > 0) params.minPrice = fromPrice.value
-  if (toPrice.value > 0) params.maxPrice = toPrice.value
+  productStore.params.categoryId = filterStore.picked.category
+  productStore.params['materialIds[]'] = toRaw(filterStore.picked.materials)
+  productStore.params['seasonIds[]'] = toRaw(filterStore.picked.seasons)
+  productStore.params.minPrice = filterStore.picked.fromPrice
+  productStore.params.maxPrice = filterStore.picked.toPrice
 
-  productStore.fill(params)
+  productStore.fill()
 }
 
 function onReset() {
-  fromPrice.value = null
-  toPrice.value = null
-  pickedCategory.value = -1
-  pickedMaterials.value = []
-  pickedSeasons.value = []
+  filterStore.picked.fromPrice = null
+  filterStore.picked.toPrice = null
+  filterStore.picked.category = 0
+  filterStore.picked.materials = []
+  filterStore.picked.seasons = []
   onSubmit()
 }
 
@@ -51,7 +44,7 @@ const maxPrice = computed(() => {
             class="form__input"
             type="text"
             name="min-price"
-            v-model="fromPrice"
+            v-model.number="filterStore.picked.fromPrice"
             placeholder="0"
           />
           <span class="form__value">От</span>
@@ -61,7 +54,7 @@ const maxPrice = computed(() => {
             class="form__input"
             type="text"
             name="max-price"
-            v-model="toPrice"
+            v-model.number="filterStore.picked.toPrice"
             :placeholder="maxPrice"
           />
           <span class="form__value">До</span>
@@ -71,8 +64,8 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category" v-model="pickedCategory">
-            <option :value="-1">Все категории</option>
+          <select class="form__select" type="text" name="category" v-model="filterStore.picked.category">
+            <option :value="0">Все категории</option>
             <option
               v-for="category of filterStore.categories"
               :value="category.id"
@@ -94,7 +87,7 @@ const maxPrice = computed(() => {
                 type="checkbox"
                 name="material"
                 :value="material.id"
-                v-model="pickedMaterials"
+                v-model="filterStore.picked.materials"
               />
               <span class="check-list__desc">
                 {{ material.title }}
@@ -115,7 +108,7 @@ const maxPrice = computed(() => {
                 type="checkbox"
                 name="collection"
                 :value="season.id"
-                v-model="pickedSeasons"
+                v-model="filterStore.picked.seasons"
               />
               <span class="check-list__desc">
                 {{ season.title }}
