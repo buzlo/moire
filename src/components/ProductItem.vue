@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useNumberFormat } from '../composables/useNumberFormat'
 import ColorsList from './ColorsList.vue'
 
-const props = defineProps(['product'])
+const props = defineProps({product: {type: Object, required: true}})
 
 const currentColor = ref(0)
 const currentImg = computed(() => {

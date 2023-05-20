@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps(['modelValue', 'pagesQty'])
+const props = defineProps({modelValue: {type: Number, required: true}, pagesQty: { type: Number, required: true}})
 const emit = defineEmits(['update:model-value'])
 const page = computed({
   get() {
@@ -17,35 +17,35 @@ const page = computed({
   <ul class="catalog__pagination pagination">
     <li class="pagination__item">
       <a
-        @click.prevent="page -= 1"
         class="pagination__link pagination__link--arrow"
         :class="{ 'pagination__link--disabled': page === 1 }"
         href="#"
         aria-label="Предыдущая страница"
+        @click.prevent="page -= 1"
       >
         <svg width="8" height="14" fill="currentColor">
           <use xlink:href="#icon-arrow-left"></use>
         </svg>
       </a>
     </li>
-    <li v-for="pageNumber of props.pagesQty" class="pagination__item" :key="pageNumber">
+    <li v-for="pageNumber of props.pagesQty" :key="pageNumber" class="pagination__item">
       <a
-        @click.prevent="page = pageNumber"
         class="pagination__link"
         :class="{ 'pagination__link--current': pageNumber === page }"
         href="#"
         :aria-label="'Страница ' + pageNumber"
+        @click.prevent="page = pageNumber"
       >
         {{ pageNumber }}
       </a>
     </li>
     <li class="pagination__item">
       <a
-        @click.prevent="page += 1"
         class="pagination__link pagination__link--arrow"
         :class="{ 'pagination__link--disabled': page === props.pagesQty }"
         href="#"
         aria-label="Следующая страница"
+        @click.prevent="page += 1"
       >
         <svg width="8" height="14" fill="currentColor">
           <use xlink:href="#icon-arrow-right"></use>

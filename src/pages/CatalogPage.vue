@@ -39,11 +39,11 @@ productStore.fill()
     </div>
 
     <div class="content__catalog">
-      <CatalogFilter />
+        <CatalogFilter />
       <div v-if="productStore.isFetching">Загрузка товаров...</div>
       <div v-else-if="productStore.hasFetchingError">
         <p>При загрузке товаров произошла ошибка.</p>
-        <button @click.prevent="productStore.fill()" class="button button--primary">
+        <button class="button button--primary" @click.prevent="productStore.fill()">
           Попробовать<br />ещё раз
         </button>
       </div>
@@ -51,11 +51,11 @@ productStore.fill()
         <ul class="catalog__list">
           <ProductItem
             v-for="product of currentPageProducts"
-            :product="product"
             :key="product.id"
+            :product="product"
           ></ProductItem>
         </ul>
-        <BasePagination v-model="page" :pagesQty="pagesQty" />
+        <BasePagination v-model="page" :pages-qty="pagesQty" />
       </section>
     </div>
   </main>

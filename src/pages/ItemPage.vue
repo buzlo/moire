@@ -59,7 +59,7 @@ function setZoomedInPic(index) {
     <div v-if="isFetching">Загрузка товаров...</div>
     <div v-else-if="hasFetchingError">
       <p>При загрузке товаров произошла ошибка.</p>
-      <button @click.prevent="getProductData()" class="button button--primary">
+      <button class="button button--primary" @click.prevent="getProductData()">
         Попробовать<br />ещё раз
       </button>
     </div>
@@ -87,11 +87,11 @@ function setZoomedInPic(index) {
             <img width="570" height="570" :src="zoomedInPicUrl" :alt="product.title" />
           </div>
           <ul class="pics__list">
-            <li v-for="(pic, index) of pics" class="pics__item" :key="pic">
+            <li v-for="(pic, index) of pics" :key="pic" class="pics__item">
               <a
-                @click.prevent="setZoomedInPic(index)"
                 href="#"
                 class="pics__link pics__link--current"
+                @click.prevent="setZoomedInPic(index)"
               >
                 <img width="98" height="98" :src="pic.file.url" :alt="product.title" />
               </a>
@@ -107,19 +107,19 @@ function setZoomedInPic(index) {
               <div class="item__row item__row--center">
                 <div class="form__counter">
                   <button
-                    @click="qtyToAdd -= 1"
                     type="button"
                     aria-label="Убрать один товар"
                     :disabled="qtyToAdd === 1"
+                    @click="qtyToAdd -= 1"
                   >
                     <svg width="12" height="12" fill="currentColor">
                       <use xlink:href="#icon-minus"></use>
                     </svg>
                   </button>
 
-                  <input type="text" v-model="qtyToAdd" name="count" />
+                  <input v-model="qtyToAdd" type="text" name="count" />
 
-                  <button @click="qtyToAdd += 1" type="button" aria-label="Добавить один товар">
+                  <button type="button" aria-label="Добавить один товар" @click="qtyToAdd += 1">
                     <svg width="12" height="12" fill="currentColor">
                       <use xlink:href="#icon-plus"></use>
                     </svg>
@@ -144,7 +144,7 @@ function setZoomedInPic(index) {
                       type="text"
                       name="category"
                     >
-                      <option v-for="(size, index) of product.sizes" :value="index" :key="size">
+                      <option v-for="(size, index) of product.sizes" :key="size" :value="index">
                         {{ size.title }}
                       </option>
                     </select>
@@ -159,8 +159,8 @@ function setZoomedInPic(index) {
 
         <div class="item__desc">
           <ul class="tabs">
-            <li v-for="(_, name) in descrTabs" class="tabs__item" :key="name">
-              <a @click.prevent="descrTab = name" :class="{'tabs__link--current': descrTab === name}" class="tabs__link" href="#">
+            <li v-for="(_, name) in descrTabs" :key="name" class="tabs__item">
+              <a :class="{'tabs__link--current': descrTab === name}" class="tabs__link" href="#" @click.prevent="descrTab = name">
                 {{ name }}
               </a>
             </li>

@@ -1,58 +1,27 @@
 <script setup>
-import { computed, ref, reactive, toRaw } from 'vue'
+import { computed, toRaw } from 'vue'
 import { useProductStore } from '../stores/ProductStore'
-import { API_BASE_URL } from '../config'
-import { useFetchAll } from '../composables/useFetchAll'
+import { useFilterStore } from '../stores/FilterStore';
 
 const productStore = useProductStore()
-
-const categories = ref([])
-const materials = ref([])
-const seasons = ref([])
-const isFetching = ref(false)
-const hasFetchingError = ref(true)
-
-const picked = reactive({
-  fromPrice: null,
-  toPrice: null,
-  category: 0,
-  materials: [],
-  seasons: []
-})
-
-getFilterData()
-
-async function getFilterData() {
-  isFetching.value = true
-  hasFetchingError.value = false
-  try {
-    ;[categories.value, materials.value, seasons.value] = await useFetchAll(
-      [`${API_BASE_URL}/productCategories`, `${API_BASE_URL}/materials`, `${API_BASE_URL}/seasons`],
-      'items'
-    )
-  } catch {
-    hasFetchingError.value = true
-  }
-
-  isFetching.value = false
-}
+const filterStore = useFilterStore()
 
 function onSubmit() {
-  productStore.params.categoryId = picked.category
-  productStore.params['materialIds[]'] = toRaw(picked.materials)
-  productStore.params['seasonIds[]'] = toRaw(picked.seasons)
-  productStore.params.minPrice = picked.fromPrice
-  productStore.params.maxPrice = picked.toPrice
+  productStore.params.categoryId = filterStore.pickedValues.category
+  productStore.params['materialIds[]'] = toRaw(filterStore.pickedValues.materials)
+  productStore.params['seasonIds[]'] = toRaw(filterStore.pickedValues.seasons)
+  productStore.params.minPrice = filterStore.pickedValues.fromPrice
+  productStore.params.maxPrice = filterStore.pickedValues.toPrice
 
   productStore.fill()
 }
 
 function onReset() {
-  picked.fromPrice = null
-  picked.toPrice = null
-  picked.category = 0
-  picked.materials = []
-  picked.seasons = []
+  filterStore.pickedValues.fromPrice = null
+  filterStore.pickedValues.toPrice = null
+  filterStore.pickedValues.category = 0
+  filterStore.pickedValues.materials = []
+  filterStore.pickedValues.seasons = []
   onSubmit()
 }
 
@@ -64,33 +33,33 @@ const maxPrice = computed(() => {
 </script>
 
 <template>
-  <div v-if="isFetching">Загрузка фильтра...</div>
-  <div v-else-if="hasFetchingError">
+  <div v-if="filterStore.isFetching">Загрузка фильтра...</div>
+  <div v-else-if="filterStore.hasFetchingError">
     <p>При загрузке фильтра произошла ошибка.</p>
-    <button @click.prevent="getFilterData()" class="button button--primary">
+    <button class="button button--primary" @click.prevent="getFilterData()">
       Попробовать<br />ещё раз
     </button>
   </div>
   <aside v-else class="filter">
-    <form @submit.prevent="onSubmit" class="filter__form form" action="#" method="get">
+    <form class="filter__form form" action="#" method="get" @submit.prevent="onSubmit">
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
           <input
+            v-model.number="filterStore.pickedValues.fromPrice"
             class="form__input"
             type="text"
             name="min-price"
-            v-model.number="picked.fromPrice"
             placeholder="0"
           />
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
           <input
+            v-model.number="filterStore.pickedValues.toPrice"
             class="form__input"
             type="text"
             name="max-price"
-            v-model.number="picked.toPrice"
             :placeholder="maxPrice"
           />
           <span class="form__value">До</span>
@@ -100,9 +69,9 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" name="category" v-model="picked.category">
+          <select v-model="filterStore.pickedValues.category" class="form__select" name="category">
             <option :value="0">Все категории</option>
-            <option v-for="category of categories" :value="category.id" :key="category.id">
+            <option v-for="category of filterStore.categories" :key="category.id" :value="category.id">
               {{ category.title }}
             </option>
           </select>
@@ -112,14 +81,14 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
-          <li v-for="material of materials" class="check-list__item" :key="material.id">
+          <li v-for="material of filterStore.materials" :key="material.id" class="check-list__item">
             <label class="check-list__label">
               <input
+                v-model="filterStore.pickedValues.materials"
                 class="check-list__check sr-only"
                 type="checkbox"
                 name="material"
                 :value="material.id"
-                v-model="picked.materials"
               />
               <span class="check-list__desc">
                 {{ material.title }}
@@ -133,14 +102,14 @@ const maxPrice = computed(() => {
       <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
-          <li v-for="season of seasons" class="check-list__item" :key="season.id">
+          <li v-for="season of filterStore.seasons" :key="season.id" class="check-list__item">
             <label class="check-list__label">
               <input
+                v-model="filterStore.pickedValues.seasons"
                 class="check-list__check sr-only"
                 type="checkbox"
                 name="collection"
                 :value="season.id"
-                v-model="picked.seasons"
               />
               <span class="check-list__desc">
                 {{ season.title }}
@@ -152,7 +121,7 @@ const maxPrice = computed(() => {
       </fieldset>
 
       <button class="filter__submit button button--primary" type="submit">Применить</button>
-      <button @click.prevent="onReset" class="filter__reset button button--second" type="button">
+      <button v-show="filterStore.hasPickedValues" class="filter__reset button button--second" type="button" @click.prevent="onReset">
         Сбросить
       </button>
     </form>
