@@ -1,7 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps({modelValue: {type: Number, required: true}, pagesQty: { type: Number, required: true}})
+const props = defineProps({
+  modelValue: { type: Number, required: true },
+  pagesQty: { type: Number, required: true }
+})
 const emit = defineEmits(['update:model-value'])
 const page = computed({
   get() {
@@ -56,10 +59,9 @@ const page = computed({
 </template>
 
 <style lang="scss" scoped>
+@import '../styles/mixins';
+@import '../styles/variables';
 .pagination {
-  @import '../styles/variables';
-  @import '../styles/mixins';
-
   @include ulres;
 
   display: flex;

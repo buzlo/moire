@@ -1,6 +1,9 @@
 <script setup>
 import { computed } from 'vue'
-const props = defineProps({modelValue: {type: Number, required: true}, colors: {type: Array, required: true}})
+const props = defineProps({
+  modelValue: { type: Number, required: true },
+  colors: { type: Array, required: true }
+})
 const emit = defineEmits(['update:model-value'])
 
 const currentColor = computed({
@@ -38,10 +41,9 @@ const currentColor = computed({
 </template>
 
 <style lang="scss" scoped>
+@import '../styles/mixins';
+@import '../styles/variables';
 .colors {
-  @import '../styles/mixins';
-  @import '../styles/variables';
-
   @include ulres;
 
   --border-color: #fff;

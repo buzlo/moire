@@ -1,0 +1,56 @@
+@import './mixins';
+@import './variables';
+
+.button {
+  @include inpres;
+
+  display: inline-block;
+  padding: 25px 15px;
+  transition: $transition;
+
+  font-family: $font-second;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background-color: $color-primary;
+    border: none;
+
+    color: #fff;
+    font-size: 13px;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus {
+      background-color: #150C26;
+    }
+  }
+
+  &--second {
+    background-color: transparent;
+    border: 1px solid #222;
+    padding: 15px;
+
+    color: $text-main;
+    font-size: 14px;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus {
+      background-color: #222;
+      color: #fff;
+    }
+  }
+}
+
+.button-del {
+  @include inpres;
+
+  width: 20px;
+  height: 20px;
+}

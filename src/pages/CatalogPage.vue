@@ -22,8 +22,6 @@ const currentPageProducts = computed(() => {
   }
   return computedValue
 })
-
-productStore.fill()
 </script>
 
 <template>

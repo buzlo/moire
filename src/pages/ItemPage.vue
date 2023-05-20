@@ -6,6 +6,7 @@ import { vMaska } from 'maska'
 import ColorsList from '../components/ColorsList.vue'
 import ItemInfoTab from '../components/ItemInfoTab.vue'
 import ItemDeliveryTab from '../components/ItemDeliveryTab.vue'
+import BaseBreadcrumbs from '../components/BaseBreadcrumbs.vue'
 
 import { API_BASE_URL } from '../config'
 import { useCartStore } from '../stores/CartStore'
@@ -44,6 +45,24 @@ watch(
     }
   }
 )
+
+const breadcrumbItems = reactive([
+  {
+    title: 'Каталог',
+    routeName: 'catalog'
+  },
+  {
+    title: computed(() => product.category?.title),
+    query: computed(() => ({
+      category: product.category?.id
+    })),
+    routeName: 'catalog'
+  },
+  {
+    title: computed(() => product.title),
+    routeName: ''
+  }
+])
 
 const descrTabs = {
   'Информация о товаре': ItemInfoTab,
@@ -93,19 +112,7 @@ function setZoomedInPic(index) {
 
     <template v-else>
       <div class="content__top">
-        <ul class="breadcrumbs">
-          <li class="breadcrumbs__item">
-            <RouterLink :to="{ name: 'catalog' }" class="breadcrumbs__link" href="#">
-              Каталог
-            </RouterLink>
-          </li>
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link" href="#"> {{ product.category.title }} </a>
-          </li>
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link"> {{ product.title }} </a>
-          </li>
-        </ul>
+        <BaseBreadcrumbs :items="breadcrumbItems"></BaseBreadcrumbs>
       </div>
 
       <section class="item">
@@ -224,8 +231,6 @@ function setZoomedInPic(index) {
 
 <style lang="scss" scoped>
 @import '../styles/variables';
-@import '../styles/content';
-@import '../styles/form';
 .item {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

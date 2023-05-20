@@ -1,10 +1,16 @@
 <script setup>
 import { computed, toRaw } from 'vue'
+import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/ProductStore'
-import { useFilterStore } from '../stores/FilterStore';
+import { useFilterStore } from '../stores/FilterStore'
 
 const productStore = useProductStore()
 const filterStore = useFilterStore()
+const route = useRoute()
+
+filterStore.pickedValues.category = route.query.category ?? 0
+
+onSubmit()
 
 function onSubmit() {
   productStore.params.categoryId = filterStore.pickedValues.category
@@ -71,7 +77,11 @@ const maxPrice = computed(() => {
         <label class="form__label form__label--select">
           <select v-model="filterStore.pickedValues.category" class="form__select" name="category">
             <option :value="0">Все категории</option>
-            <option v-for="category of filterStore.categories" :key="category.id" :value="category.id">
+            <option
+              v-for="category of filterStore.categories"
+              :key="category.id"
+              :value="category.id"
+            >
               {{ category.title }}
             </option>
           </select>
@@ -121,7 +131,12 @@ const maxPrice = computed(() => {
       </fieldset>
 
       <button class="filter__submit button button--primary" type="submit">Применить</button>
-      <button v-show="filterStore.hasPickedValues" class="filter__reset button button--second" type="button" @click.prevent="onReset">
+      <button
+        v-show="filterStore.hasPickedValues"
+        class="filter__reset button button--second"
+        type="button"
+        @click.prevent="onReset"
+      >
         Сбросить
       </button>
     </form>
@@ -129,7 +144,6 @@ const maxPrice = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import '../styles/form';
 .filter {
   &__form {
     padding: 0 25px 60px;
