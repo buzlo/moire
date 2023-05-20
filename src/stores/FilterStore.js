@@ -31,16 +31,17 @@ export const useFilterStore = defineStore('filterData', () => {
     isFetching.value = true
     hasFetchingError.value = false
     try {
-      ;[categories.value, materials.value, seasons.value] = await useFetchAll(
-        [
+      ;[categories.value, materials.value, seasons.value] = await useFetchAll({
+        urls: [
           `${API_BASE_URL}/productCategories`,
           `${API_BASE_URL}/materials`,
           `${API_BASE_URL}/seasons`
         ],
-        'items'
-      )
-    } catch {
+        propertyToGet: 'items'
+      })
+    } catch (error) {
       hasFetchingError.value = true
+      console.log(error)
     }
 
     isFetching.value = false

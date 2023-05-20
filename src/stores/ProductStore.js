@@ -27,9 +27,10 @@ export const useProductStore = defineStore('products', () => {
     url.search = new URLSearchParams(searchParams)
 
     try {
-      [products.value] = await useFetchAll([url], 'items')
-    } catch {
+      ;[products.value] = await useFetchAll({ urls: [url], propertyToGet: 'items' })
+    } catch (error) {
       hasFetchingError.value = true
+      console.log(error)
     }
 
     isFetching.value = false

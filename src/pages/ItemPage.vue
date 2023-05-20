@@ -1,32 +1,48 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { vMaska } from 'maska'
+
 import ColorsList from '../components/ColorsList.vue'
-import { API_BASE_URL } from '../config'
-import { useFetchAll } from '../composables/useFetchAll'
-import { useNumberFormat } from '../composables/useNumberFormat'
 import ItemInfoTab from '../components/ItemInfoTab.vue'
 import ItemDeliveryTab from '../components/ItemDeliveryTab.vue'
 
+import { API_BASE_URL } from '../config'
+import { useCartStore } from '../stores/CartStore'
+import { useFetchAll } from '../composables/useFetchAll'
+import { useNumberFormat } from '../composables/useNumberFormat'
+
 const route = useRoute()
-const product = ref({})
-const isFetching = ref(false)
-const hasFetchingError = ref(true)
-const qtyToAdd = ref(1)
+const cartStore = useCartStore()
+
+const product = reactive({})
+
+const isFetchingProduct = ref(false)
+const hasFetchingProductError = ref(true)
 
 getProductData()
 
-const picked = reactive({
+const pickedData = reactive({
   colorIndex: 0,
-  sizeIndex: 0
+  sizeIndex: 0,
+  quantity: 1
 })
 
 const pics = computed(() =>
-  isFetching.value ? null : product.value.colors[picked.colorIndex].gallery
+  isFetchingProduct.value ? null : product.colors[pickedData.colorIndex].gallery
 )
 const zoomedInPicIndex = ref(0)
 const zoomedInPicUrl = computed(() =>
   !pics.value ? null : pics.value[zoomedInPicIndex.value].file.url
+)
+
+watch(
+  () => pickedData.quantity,
+  (value) => {
+    if (value < 1) {
+      pickedData.quantity = 1
+    }
+  }
 )
 
 const descrTabs = {
@@ -36,17 +52,28 @@ const descrTabs = {
 const descrTab = ref('Информация о товаре')
 
 async function getProductData() {
-  isFetching.value = true
-  hasFetchingError.value = false
+  isFetchingProduct.value = true
+  hasFetchingProductError.value = false
 
   const url = `${API_BASE_URL}/products/${route.params.id}`
   try {
-    ;[product.value] = await useFetchAll([url])
-  } catch {
-    hasFetchingError.value = true
+    const [productData] = await useFetchAll({ urls: [url] })
+    Object.assign(product, productData)
+  } catch (error) {
+    hasFetchingProductError.value = true
+    console.log(error)
   }
 
-  isFetching.value = false
+  isFetchingProduct.value = false
+}
+
+function onSubmit() {
+  cartStore.addItemToCart({
+    productId: product.id,
+    colorId: product.colors[pickedData.colorIndex].color.id,
+    sizeId: product.sizes[pickedData.sizeIndex].id,
+    quantity: pickedData.quantity
+  })
 }
 
 function setZoomedInPic(index) {
@@ -56,9 +83,9 @@ function setZoomedInPic(index) {
 
 <template>
   <main class="content container">
-    <div v-if="isFetching">Загрузка товаров...</div>
-    <div v-else-if="hasFetchingError">
-      <p>При загрузке товаров произошла ошибка.</p>
+    <div v-if="isFetchingProduct">Загрузка информации о товаре...</div>
+    <div v-else-if="hasFetchingProductError">
+      <p>При загрузке произошла ошибка.</p>
       <button class="button button--primary" @click.prevent="getProductData()">
         Попробовать<br />ещё раз
       </button>
@@ -109,17 +136,28 @@ function setZoomedInPic(index) {
                   <button
                     type="button"
                     aria-label="Убрать один товар"
-                    :disabled="qtyToAdd === 1"
-                    @click="qtyToAdd -= 1"
+                    :disabled="pickedData.quantity === 1"
+                    @click="pickedData.quantity -= 1"
                   >
                     <svg width="12" height="12" fill="currentColor">
                       <use xlink:href="#icon-minus"></use>
                     </svg>
                   </button>
 
-                  <input v-model="qtyToAdd" type="text" name="count" />
+                  <input
+                    v-model.number="pickedData.quantity"
+                    v-maska
+                    data-maska="d"
+                    data-maska-tokens="d:\d:multiple"
+                    type="text"
+                    name="count"
+                  />
 
-                  <button type="button" aria-label="Добавить один товар" @click="qtyToAdd += 1">
+                  <button
+                    type="button"
+                    aria-label="Добавить один товар"
+                    @click="pickedData.quantity += 1"
+                  >
                     <svg width="12" height="12" fill="currentColor">
                       <use xlink:href="#icon-plus"></use>
                     </svg>
@@ -132,18 +170,13 @@ function setZoomedInPic(index) {
               <div class="item__row">
                 <fieldset class="form__block">
                   <legend class="form__legend">Цвет</legend>
-                  <ColorsList v-model="picked.colorIndex" :colors="product.colors"></ColorsList>
+                  <ColorsList v-model="pickedData.colorIndex" :colors="product.colors"></ColorsList>
                 </fieldset>
 
                 <fieldset class="form__block">
                   <legend class="form__legend">Размер</legend>
                   <label class="form__label form__label--small form__label--select">
-                    <select
-                      v-model="picked.sizeIndex"
-                      class="form__select"
-                      type="text"
-                      name="category"
-                    >
+                    <select v-model="pickedData.sizeIndex" class="form__select" name="category">
                       <option v-for="(size, index) of product.sizes" :key="size" :value="index">
                         {{ size.title }}
                       </option>
@@ -152,7 +185,18 @@ function setZoomedInPic(index) {
                 </fieldset>
               </div>
 
-              <button class="item__button button button--primary" type="submit">В корзину</button>
+              <button
+                class="item__button button button--primary"
+                type="submit"
+                @click.prevent="onSubmit"
+              >
+                В корзину
+              </button>
+              <span v-if="cartStore.isAddingProduct">Товар добавляется...</span>
+              <span v-else-if="cartStore.isProductAdded">Товар добавлен успешно!</span>
+              <span v-else-if="cartStore.hasProductAddingError"
+                >Произошла ошибка, попробуйте позднее</span
+              >
             </form>
           </div>
         </div>
@@ -160,7 +204,12 @@ function setZoomedInPic(index) {
         <div class="item__desc">
           <ul class="tabs">
             <li v-for="(_, name) in descrTabs" :key="name" class="tabs__item">
-              <a :class="{'tabs__link--current': descrTab === name}" class="tabs__link" href="#" @click.prevent="descrTab = name">
+              <a
+                :class="{ 'tabs__link--current': descrTab === name }"
+                class="tabs__link"
+                href="#"
+                @click.prevent="descrTab = name"
+              >
                 {{ name }}
               </a>
             </li>

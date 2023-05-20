@@ -1,4 +1,7 @@
-<script setup></script>
+<script setup>
+import { useCartStore } from '../stores/CartStore';
+const cartStore = useCartStore()
+</script>
 
 <template>
   <header class="header container">
@@ -20,7 +23,7 @@
         <svg width="19" height="24">
           <use xlink:href="#icon-cart"></use>
         </svg>
-        <span class="header__count" aria-label="Количество товаров">3</span>
+        <span class="header__count" aria-label="Количество товаров">{{ cartStore.cartItems.length }}</span>
       </a>
     </div>
   </header>

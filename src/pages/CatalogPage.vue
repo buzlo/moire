@@ -39,7 +39,7 @@ productStore.fill()
     </div>
 
     <div class="content__catalog">
-        <CatalogFilter />
+      <CatalogFilter />
       <div v-if="productStore.isFetching">Загрузка товаров...</div>
       <div v-else-if="productStore.hasFetchingError">
         <p>При загрузке товаров произошла ошибка.</p>
