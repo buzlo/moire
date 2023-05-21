@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, watch, watchEffect } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { vMaska } from 'maska'
 
@@ -32,11 +32,17 @@ const breadcrumbItems = reactive([
 const itemsInfo = computed(() => useProductCountWithNoun(cartStore.items.length))
 
 const rules = useCreateRules()
+
+const phoneMaska = reactive({
+  unmasked: ''
+})
 const formState = reactive({
   deliveryTypeId: null,
-  paymentTypeId: null
+  paymentTypeId: null,
+  comment: '',
+  phone: ''
 })
-const phoneMaska = reactive({})
+watchEffect(() => (formState.phone = '7' + phoneMaska.unmasked))
 
 const formInputs = [
   {
@@ -52,7 +58,7 @@ const formInputs = [
     label: 'Адрес доставки'
   },
   {
-    name: 'phone',
+    name: 'maskedPhone',
     type: 'tel',
     placeholder: 'Введите ваш телефон',
     label: 'Телефон'
@@ -66,22 +72,26 @@ const formInputs = [
 ]
 
 for (const input of formInputs) {
-  formState[input.name] = input.name !== 'phone' ? '' : computed(() => phoneMaska.unmasked ?? '')
+  formState[input.name] = ''
 }
 
 const v$ = useVuelidate(rules, formState)
 
 const loading = reactive({
-  deliveries: false
+  deliveries: false,
+  payments: false,
+  submit: false
 })
 const errors = reactive({
-  deliveries: true
+  deliveries: true,
+  payments: true,
+  submit: true
 })
 
 const deliveries = reactive([])
 const deliveryPrice = computed(() => {
   const index = deliveries.findIndex((delivery) => delivery.id === formState.deliveryTypeId)
-  return deliveries[index].price
+  return deliveries[index]?.price
 })
 
 getDeliveriesData()
@@ -142,22 +152,25 @@ function formatPrice(price) {
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="onSubmit">
         <div class="cart__field">
           <div class="cart__data">
             <label v-for="item of formInputs" :key="item.name" class="form__label">
               <input
-                v-model="v$[item.name].$model"
-                v-maska="item.name === 'phone' ? phoneMaska : null"
+                v-model="formState[item.name]"
+                v-maska="item.name === 'maskedPhone' ? phoneMaska : null"
                 class="form__input"
                 :type="item.type"
                 :name="item.name"
-                :data-maska="item.name === 'phone' ? '+7 ### ###-##-##' : null"
+                :data-maska="item.name === 'maskedPhone' ? '+7 ### ###-##-##' : null"
                 :placeholder="item.placeholder"
               />
               <span class="form__value">{{ item.label }}</span>
               <div class="form__error">
-                <span v-for="$error of v$[item.name].$errors" :key="$error.$validator">
+                <span
+                  v-for="$error of v$[item.name !== 'maskedPhone' ? item.name : 'phone'].$errors"
+                  :key="$error.$validator"
+                >
                   {{ $error.$message + ' ' }}
                 </span>
               </div>
@@ -165,6 +178,7 @@ function formatPrice(price) {
 
             <label class="form__label">
               <textarea
+                v-model="formState.comment"
                 class="form__input form__input--area"
                 name="comments"
                 placeholder="Ваши пожелания"
