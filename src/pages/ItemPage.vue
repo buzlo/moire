@@ -245,7 +245,7 @@ function setZoomedInPic(index) {
 }
 
 .item__desc {
-  grid-column: 1/-1
+  grid-column: 1/-1;
 }
 
 .item__content {
@@ -285,6 +285,6 @@ function setZoomedInPic(index) {
 }
 
 .item__button {
-  min-width: 200px;;
+  min-width: 200px;
 }
 </style>

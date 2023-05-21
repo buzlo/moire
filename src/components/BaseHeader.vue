@@ -8,14 +8,14 @@ const cartStore = useCartStore()
     <div class="header__wrapper">
       <span class="header__info">Каталог</span>
 
-      <a class="header__logo" href="#">
+      <RouterLink class="header__logo" href="#" :to="{ name: 'catalog' }">
         <img
           src="/img/svg/logo-moire.svg"
           alt="Логотип интернет магазина Moire"
           width="116"
           height="34"
         />
-      </a>
+      </RouterLink>
 
       <a class="header__tel" href="tel:88006009009"> 8 800 600 90 09 </a>
 
@@ -29,7 +29,7 @@ const cartStore = useCartStore()
           <use xlink:href="#icon-cart"></use>
         </svg>
         <span class="header__count" aria-label="Количество товаров">{{
-          cartStore.cartItems.length
+          cartStore.items.length
         }}</span>
       </RouterLink>
     </div>

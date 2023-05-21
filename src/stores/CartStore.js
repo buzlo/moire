@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { API_BASE_URL } from '../config'
 import { useFetchAll } from '../composables/useFetchAll'
+import { useCountTotal } from '../composables/useCountTotal'
 
 export const useCartStore = defineStore('cart', () => {
-  const cartItems = ref([])
+  const items = ref([])
   const userAccessKey = ref(localStorage.getItem('moireUserAccessKey'))
 
   const isItemAdded = ref(false)
@@ -21,6 +22,8 @@ export const useCartStore = defineStore('cart', () => {
     update: false
   })
 
+  const cartTotal = computed(() => useCountTotal(items.value))
+
   loadCartData()
 
   async function loadCartData() {
@@ -33,7 +36,7 @@ export const useCartStore = defineStore('cart', () => {
 
     try {
       const [cartData] = await useFetchAll({ urls: [url] })
-      cartItems.value = cartData.items
+      items.value = cartData.items
       if (!userAccessKey.value) {
         userAccessKey.value = cartData.user.accessKey
         localStorage.setItem('moireUserAccessKey', userAccessKey.value)
@@ -61,7 +64,7 @@ export const useCartStore = defineStore('cart', () => {
 
         body: { productId, colorId, sizeId, quantity }
       })
-      cartItems.value = cartData.items
+      items.value = cartData.items
       isItemAdded.value = true
     } catch (error) {
       errors.itemAdd = true
@@ -86,7 +89,7 @@ export const useCartStore = defineStore('cart', () => {
 
         body: { basketItemId: id }
       })
-      cartItems.value = cartData.items
+      items.value = cartData.items
     } catch (error) {
       errors.update = true
       console.log(error)
@@ -110,7 +113,7 @@ export const useCartStore = defineStore('cart', () => {
 
         body: { basketItemId: id, quantity: qty }
       })
-      cartItems.value = cartData.items
+      items.value = cartData.items
     } catch (error) {
       errors.update = true
       console.log(error)
@@ -120,10 +123,11 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   return {
-    cartItems,
+    items,
     loading,
     errors,
     isItemAdded,
+    cartTotal,
     addItemToCart,
     deleteCartItem,
     updateCartItem

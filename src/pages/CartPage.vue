@@ -4,9 +4,8 @@ import { computed, reactive } from 'vue'
 import BaseBreadcrumbs from '../components/BaseBreadcrumbs.vue'
 
 import { useCartStore } from '../stores/CartStore'
-import { useInflectNoun } from '../composables/useInflectNoun'
 import { useNumberFormat } from '../composables/useNumberFormat'
-import { useCountTotal } from '../composables/useCountTotal'
+import { useProductCountWithNoun } from '../composables/useProductCountWithNoun'
 import CartItem from '../components/CartItem.vue'
 
 const cartStore = useCartStore()
@@ -22,12 +21,7 @@ const breadcrumbItems = reactive([
   }
 ])
 
-const itemsInfo = computed(() => {
-  const count = cartStore.cartItems.length
-  return count + ' ' + useInflectNoun(count, ['товар', 'товара', 'товаров'])
-})
-
-const cartTotal = computed(() => useCountTotal(cartStore.cartItems))
+const itemsInfo = computed(() => useProductCountWithNoun(cartStore.items.length))
 
 function onItemDelete(id) {
   cartStore.deleteCartItem(id)
@@ -45,7 +39,7 @@ function onItemUpdate(id, qty) {
 
       <div class="content__row">
         <h1 class="content__title">Корзина</h1>
-        <span class="content__info"> {{ itemsInfo }} </span>
+        <span class="content__info"> {{ itemsInfo.count + ' ' + itemsInfo.noun }} </span>
       </div>
     </div>
 
@@ -61,7 +55,7 @@ function onItemUpdate(id, qty) {
         <div class="cart__field">
           <ul class="cart__list">
             <CartItem
-              v-for="item of cartStore.cartItems"
+              v-for="item of cartStore.items"
               :key="item.id"
               :item="item"
               @update-qty="onItemUpdate(item.id, $event)"
@@ -73,10 +67,12 @@ function onItemUpdate(id, qty) {
         <div class="cart__block">
           <p class="cart__desc">Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе</p>
           <p class="cart__price">
-            Итого: <span>{{ useNumberFormat(cartTotal) }} ₽</span>
+            Итого: <span>{{ useNumberFormat(cartStore.cartTotal) }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primary" type="submit">Оформить заказ</button>
+          <RouterLink class="cart__button button button--primary" :to="{ name: 'order' }"
+            >Оформить заказ</RouterLink
+          >
         </div>
 
         <span v-if="cartStore.loading.update">Корзина обновляется...</span>
