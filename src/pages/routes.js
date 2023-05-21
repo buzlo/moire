@@ -3,6 +3,7 @@ import CatalogPage from './CatalogPage.vue'
 import ItemPage from './ItemPage.vue'
 import CartPage from './CartPage.vue'
 import OrderPage from './OrderPage.vue'
+import OrderInfoPage from './OrderInfoPage.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/cart/order',
     name: 'order',
     component: OrderPage
+  },
+  {
+    path: '/cart/order/:id',
+    name: 'order-info',
+    component: OrderInfoPage
   }
 ]
 

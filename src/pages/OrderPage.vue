@@ -1,5 +1,6 @@
 <script setup>
-import { computed, reactive, watch, watchEffect } from 'vue'
+import { computed, reactive, unref, watch, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import { useVuelidate } from '@vuelidate/core'
 import { vMaska } from 'maska'
 
@@ -7,12 +8,15 @@ import BaseBreadcrumbs from '../components/BaseBreadcrumbs.vue'
 
 import { API_BASE_URL } from '../config'
 import { useCartStore } from '../stores/CartStore'
+import { useOrderStore } from '../stores/OrderStore'
 import { useFetchAll } from '../composables/useFetchAll'
 import { useCreateRules } from '../composables/useCreateRules'
 import { useProductCountWithNoun } from '../composables/useProductCountWithNoun'
 import { useNumberFormat } from '../composables/useNumberFormat'
 
 const cartStore = useCartStore()
+const orderStore = useOrderStore()
+const router = useRouter()
 
 const breadcrumbItems = reactive([
   {
@@ -42,7 +46,7 @@ const formState = reactive({
   comment: '',
   phone: ''
 })
-watchEffect(() => (formState.phone = '7' + phoneMaska.unmasked))
+watchEffect(() => (formState.phone = '+7' + phoneMaska.unmasked))
 
 const formInputs = [
   {
@@ -91,7 +95,10 @@ const errors = reactive({
 const deliveries = reactive([])
 const deliveryPrice = computed(() => {
   const index = deliveries.findIndex((delivery) => delivery.id === formState.deliveryTypeId)
-  return deliveries[index]?.price
+  return +deliveries[index]?.price
+})
+const priceWithDelivery = computed(() => {
+  return +cartStore.cartTotal + deliveryPrice.value
 })
 
 getDeliveriesData()
@@ -134,6 +141,17 @@ async function getPaymentsData() {
   }
 
   loading.payments = false
+}
+
+async function onSubmit() {
+  const isFormCorrect = await unref(v$).$validate()
+  if (!isFormCorrect) return
+
+  await orderStore.submitOrder(formState, cartStore.userAccessKey)
+  if (orderStore.errors.submit) return
+
+  cartStore.loadCartData()
+  router.push(`/cart/order/${orderStore.orderData.id}`)
 }
 
 function formatPrice(price) {
@@ -240,13 +258,13 @@ function formatPrice(price) {
             </p>
             <p>
               Итого: <b>{{ itemsInfo.count }}</b> {{ itemsInfo.noun }} на сумму
-              <b>{{ useNumberFormat(cartStore.cartTotal) }} ₽</b>
+              <b>{{ useNumberFormat(priceWithDelivery) }} ₽</b>
             </p>
           </div>
 
           <button class="cart__button button button--primary" type="submit">Оформить заказ</button>
         </div>
-        <div class="cart__error form__error-block">
+        <div v-if="orderStore.errors.submit" class="cart__error form__error-block">
           <h4>Заявка не отправлена!</h4>
           <p>Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.</p>
         </div>

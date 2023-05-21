@@ -34,3 +34,5 @@ const currentImg = computed(() => {
     <ColorsList v-model="currentColor" :colors="product.colors"></ColorsList>
   </li>
 </template>
+
+<style lang="scss" scoped></style>

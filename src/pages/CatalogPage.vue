@@ -78,7 +78,7 @@ const currentPageProducts = computed(() => {
   margin-bottom: 70px;
 }
 
-.catalog__pic {
+:deep(.catalog__pic) {
   display: block;
   width: 270px;
   height: 350px;
@@ -91,7 +91,7 @@ const currentPageProducts = computed(() => {
   }
 }
 
-.catalog__title {
+:deep(.catalog__title) {
   margin: 0 0 10px;
 
   font-weight: 400;
@@ -110,7 +110,7 @@ const currentPageProducts = computed(() => {
   }
 }
 
-.catalog__price {
+:deep(.catalog__price) {
   display: block;
   margin-bottom: 10px;
 

@@ -66,6 +66,9 @@ export const useCartStore = defineStore('cart', () => {
       })
       items.value = cartData.items
       isItemAdded.value = true
+      setTimeout(() => {
+        isItemAdded.value = false
+      }, 2000)
     } catch (error) {
       errors.itemAdd = true
       console.log(error)
@@ -123,11 +126,13 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   return {
+    userAccessKey,
     items,
     loading,
     errors,
     isItemAdded,
     cartTotal,
+    loadCartData,
     addItemToCart,
     deleteCartItem,
     updateCartItem
