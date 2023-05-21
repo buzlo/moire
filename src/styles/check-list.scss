@@ -1,0 +1,66 @@
+@import './mixins';
+@import './variables';
+
+.check-list {
+  @include ulres;
+}
+
+.check-list__item {
+  &:not(:last-child) {
+    margin-bottom: 13px;
+  }
+}
+
+.check-list__label {
+  display: block;
+  cursor: pointer;
+}
+
+.check-list__desc {
+  position: relative;
+  display: block;
+  padding-left: 27px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  font-size: 16px;
+  line-height: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border: 1px solid #222222;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    opacity: 0;
+    top: 50%;
+    left: 3px;
+    width: 6px;
+    height: 6px;
+    transform: translateY(-50%);
+    background-color: $color-primary;
+    transition: $transition;
+  }
+
+  span {
+    color: #737373;
+  }
+}
+
+.check-list__label:hover .check-list__desc::after,
+.check-list__label:focus .check-list__desc::after {
+  opacity: 0.3;
+}
+
+.check-list__check:checked~.check-list__desc::after {
+  opacity: 1;
+}

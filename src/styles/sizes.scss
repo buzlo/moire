@@ -1,0 +1,53 @@
+@import './mixins';
+@import './variables';
+
+.sizes {
+  @include ulres;
+  --text-color: #B9B9B9;
+  --text-current: #222;
+
+  display: flex;
+  align-items: center;
+
+  &--primary {
+    --text-color: #898989;
+    --text-current: #8BE000;
+  }
+}
+
+.sizes__item {
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.sizes__label {
+  cursor: pointer;
+  display: block;
+}
+
+.sizes__value {
+  display: block;
+  transition: $transition;
+  min-width: 50px;
+
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-color);
+  text-transform: uppercase;
+}
+
+.sizes__label:hover .sizes__value,
+.sizes__label:focus .sizes__value {
+  font-weight: 500;
+  color: var(--text-current);
+}
+
+.sizes__radio:checked ~ .sizes__value {
+  font-weight: 500;
+  color: var(--text-current);
+}
+
+.sizes__radio:focus ~ .sizes__value {
+  opacity: 0.7;
+}

@@ -1,0 +1,30 @@
+@import './mixins';
+@import './variables';
+
+.pics {
+  &__wrapper {
+    margin-bottom: 20px;
+  }
+
+  &__list {
+    @include ulres;
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 20px;
+  }
+
+  &__link {
+    border-bottom: 3px solid transparent;
+    transition: $transition;
+
+    &:hover,
+    &:focus {
+      border-color: $color-primary;
+    }
+
+    &--current {
+      border-color: $color-primary;
+    }
+  }
+}

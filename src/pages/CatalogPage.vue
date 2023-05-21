@@ -62,64 +62,64 @@ const currentPageProducts = computed(() => {
 <style lang="scss" scoped>
 @import '../styles/variables';
 @import '../styles/mixins';
-@import '../styles/content';
+
 .catalog {
   display: flex;
   flex-direction: column;
   align-self: stretch;
+}
 
-  &__list {
-    @include ulres;
+.catalog__list {
+  @include ulres;
 
-    display: grid;
-    grid-template-columns: repeat(3, 270px);
-    grid-gap: 65px 30px;
-    margin-bottom: 70px;
-  }
+  display: grid;
+  grid-template-columns: repeat(3, 270px);
+  grid-gap: 65px 30px;
+  margin-bottom: 70px;
+}
 
-  &__pic {
-    display: block;
+.catalog__pic {
+  display: block;
+  width: 270px;
+  height: 350px;
+  margin-bottom: 20px;
+
+  img {
     width: 270px;
     height: 350px;
-    margin-bottom: 20px;
-
-    img {
-      width: 270px;
-      height: 350px;
-      object-fit: cover;
-    }
+    object-fit: cover;
   }
+}
 
-  &__title {
-    margin: 0 0 10px;
+.catalog__title {
+  margin: 0 0 10px;
 
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 22px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: $text-main;
+
+  a {
     color: $text-main;
+    transition: $transition;
 
-    a {
-      color: $text-main;
-      transition: $transition;
-
-      &:hover,
-      &:focus {
-        opacity: 0.6;
-      }
+    &:hover,
+    &:focus {
+      opacity: 0.6;
     }
   }
+}
 
-  &__price {
-    display: block;
-    margin-bottom: 10px;
+.catalog__price {
+  display: block;
+  margin-bottom: 10px;
 
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: 500;
-  }
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
 
-  &__pagination {
-    margin-top: auto;
-  }
+.catalog__pagination {
+  margin-top: auto;
 }
 </style>

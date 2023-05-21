@@ -45,60 +45,59 @@ const currentColor = computed({
 @import '../styles/variables';
 .colors {
   @include ulres;
-
   --border-color: #fff;
 
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 
-  &__item {
-    &:not(:last-child) {
-      margin-right: 4px;
-    }
-  }
-
-  &__label {
-    position: relative;
-    cursor: pointer;
-    display: block;
-    border-radius: 50%;
-    padding: 3px;
-  }
-
-  &__value {
-    display: block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    transition: $transition;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 1px solid transparent;
-      transition: $transition;
-    }
-  }
-
-  &__label:hover &__value::before,
-  &__label:focus &__value::before,
-  &__radio:checked ~ &__value::before {
-    border-color: var(--border-color);
-  }
-
-  &__radio:focus ~ &__value::before {
-    opacity: 0.7;
-  }
-
   &--black {
     --border-color: #222;
   }
+}
+
+.colors__item {
+  &:not(:last-child) {
+    margin-right: 4px;
+  }
+}
+
+.colors__label {
+  position: relative;
+  cursor: pointer;
+  display: block;
+  border-radius: 50%;
+  padding: 3px;
+}
+
+.colors__value {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: $transition;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transition: $transition;
+  }
+}
+
+.colors__label:hover .colors__value::before,
+.colors__label:focus .colors__value::before,
+.colors__radio:checked ~ .colors__value::before {
+  border-color: var(--border-color);
+}
+
+.colors__radio:focus ~ .colors__value::before {
+  opacity: 0.7;
 }
 </style>

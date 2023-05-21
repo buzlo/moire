@@ -144,6 +144,7 @@ const maxPrice = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@import '../styles/check-list';
 .filter {
   &__form {
     padding: 0 25px 60px;

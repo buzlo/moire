@@ -198,91 +198,93 @@ function setZoomedInPic(index) {
 
 <style lang="scss" scoped>
 @import '../styles/variables';
+@import '../styles/tabs';
+@import '../styles/pics';
 .item {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 55px 30px;
   align-items: flex-start;
+}
 
-  &__code {
-    font-size: 14px;
-    line-height: 1;
-    color: $text-light;
+.item__code {
+  font-size: 14px;
+  line-height: 1;
+  color: $text-light;
+}
+
+.item__title {
+  margin: 10px 0 22px;
+
+  font-size: 40px;
+  line-height: 50px;
+  font-weight: 400;
+}
+
+.item__price {
+  display: block;
+
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.item__sizes {
+  color: #898989;
+}
+
+.item__row {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  grid-gap: 20px;
+  justify-content: flex-start;
+
+  &--center {
+    align-items: center;
   }
+}
 
-  &__title {
-    margin: 10px 0 22px;
+.item__desc {
+  grid-column: 1/-1
+}
 
-    font-size: 40px;
-    line-height: 50px;
-    font-weight: 400;
-  }
+.item__content {
+  width: 595px;
+  padding-top: 50px;
 
-  &__price {
-    display: block;
+  h3 {
+    margin: 25px 0 5px;
 
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 500;
-    font-size: 40px;
-    line-height: 1;
   }
 
-  &__sizes {
-    color: #898989;
+  p {
+    margin: 0 0 20px;
+
+    font-size: 16px;
+    line-height: 28px;
+    color: $text-main;
+    font-weight: 300;
   }
 
-  &__row {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
-    grid-gap: 20px;
-    justify-content: flex-start;
+  a {
+    border-bottom: 2px dashed $text-main;
+    transition: $transition;
 
-    &--center {
-      align-items: center;
+    font-size: 14px;
+    line-height: 22px;
+    color: $text-main;
+
+    &:hover,
+    &:focus {
+      border-color: transparent;
     }
   }
+}
 
-  &__desc {
-    grid-column: 1/-1;
-  }
-
-  &__content {
-    width: 595px;
-    padding-top: 50px;
-
-    h3 {
-      margin: 25px 0 5px;
-
-      font-size: 16px;
-      line-height: 24px;
-      font-weight: 500;
-    }
-
-    p {
-      margin: 0 0 20px;
-
-      font-size: 16px;
-      line-height: 28px;
-      color: $text-main;
-      font-weight: 300;
-    }
-
-    a {
-      border-bottom: 2px dashed $text-main;
-      transition: $transition;
-
-      font-size: 14px;
-      line-height: 22px;
-      color: $text-main;
-
-      &:hover,
-      &:focus {
-        border-color: transparent;
-      }
-    }
-  }
-
-  &__button {
-    min-width: 200px;
-  }
+.item__button {
+  min-width: 200px;;
 }
 </style>

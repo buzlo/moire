@@ -86,6 +86,7 @@
 <style lang="scss" scoped>
 @import '../styles/variables';
 @import '../styles/mixins';
+@import '../styles/social';
 
 .footer {
   &__wrapper {
