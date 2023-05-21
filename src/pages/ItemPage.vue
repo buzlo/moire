@@ -168,11 +168,9 @@ function setZoomedInPic(index) {
               >
                 В корзину
               </button>
-              <span v-if="cartStore.isAddingProduct">Товар добавляется...</span>
-              <span v-else-if="cartStore.isProductAdded">Товар добавлен успешно!</span>
-              <span v-else-if="cartStore.hasProductAddingError"
-                >Произошла ошибка, попробуйте позднее</span
-              >
+              <span v-if="cartStore.loading.itemAdd">Товар добавляется...</span>
+              <span v-else-if="cartStore.errors.itemAdd">Произошла ошибка, попробуйте позднее</span>
+              <span v-else-if="cartStore.isItemAdded">Товар добавлен успешно!</span>
             </form>
           </div>
         </div>

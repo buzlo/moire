@@ -1,5 +1,5 @@
 <script setup>
-import { useCartStore } from '../stores/CartStore';
+import { useCartStore } from '../stores/CartStore'
 const cartStore = useCartStore()
 </script>
 
@@ -17,14 +17,21 @@ const cartStore = useCartStore()
         />
       </a>
 
-      <a class="header__tel" href="tel:8 800 600 90 09"> 8 800 600 90 09 </a>
+      <a class="header__tel" href="tel:88006009009"> 8 800 600 90 09 </a>
 
-      <a class="header__cart" href="cart.html" aria-label="Корзина с товарами">
+      <RouterLink
+        :to="{ name: 'cart' }"
+        class="header__cart"
+        href="cart.html"
+        aria-label="Корзина с товарами"
+      >
         <svg width="19" height="24">
           <use xlink:href="#icon-cart"></use>
         </svg>
-        <span class="header__count" aria-label="Количество товаров">{{ cartStore.cartItems.length }}</span>
-      </a>
+        <span class="header__count" aria-label="Количество товаров">{{
+          cartStore.cartItems.length
+        }}</span>
+      </RouterLink>
     </div>
   </header>
 </template>

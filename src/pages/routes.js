@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import CatalogPage from './CatalogPage.vue'
 import ItemPage from './ItemPage.vue'
+import CartPage from './CartPage.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/product/:id',
     name: 'item',
     component: ItemPage
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage
   }
 ]
 

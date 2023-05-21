@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { API_BASE_URL } from '../config'
 import { useFetchAll } from '../composables/useFetchAll'
 
@@ -7,17 +7,25 @@ export const useCartStore = defineStore('cart', () => {
   const cartItems = ref([])
   const userAccessKey = ref(localStorage.getItem('moireUserAccessKey'))
 
-  const isFetchingCart = ref(false)
-  const hasCartFetchingError = ref(true)
-  const isAddingProduct = ref(false)
-  const isProductAdded = ref(false)
-  const hasProductAddingError = ref(false)
+  const isItemAdded = ref(false)
+
+  const loading = reactive({
+    cart: false,
+    itemAdd: false,
+    update: false
+  })
+
+  const errors = reactive({
+    cart: true,
+    itemAdd: false,
+    update: false
+  })
 
   loadCartData()
 
   async function loadCartData() {
-    isFetchingCart.value = true
-    hasCartFetchingError.value = false
+    loading.cart = true
+    errors.cart = false
 
     const searchParams = [['userAccessKey', userAccessKey.value]]
     const url = new URL(`${API_BASE_URL}/baskets`)
@@ -31,16 +39,16 @@ export const useCartStore = defineStore('cart', () => {
         localStorage.setItem('moireUserAccessKey', userAccessKey.value)
       }
     } catch {
-      hasCartFetchingError.value = true
+      errors.cart = true
     }
 
-    isFetchingCart.value = false
+    loading.cart = false
   }
 
   async function addItemToCart({ productId, colorId, sizeId, quantity }) {
-    isAddingProduct.value = true
-    hasProductAddingError.value = false
-    isProductAdded.value = false
+    loading.itemAdd = true
+    errors.itemAdd = false
+    isItemAdded.value = false
 
     const searchParams = [['userAccessKey', userAccessKey.value]]
     const url = new URL(`${API_BASE_URL}/baskets/products`)
@@ -54,22 +62,70 @@ export const useCartStore = defineStore('cart', () => {
         body: { productId, colorId, sizeId, quantity }
       })
       cartItems.value = cartData.items
-      isProductAdded.value = true
+      isItemAdded.value = true
     } catch (error) {
-      hasProductAddingError.value = true
+      errors.itemAdd = true
       console.log(error)
     }
 
-    isAddingProduct.value = false
+    loading.itemAdd = false
+  }
+
+  async function deleteCartItem(id) {
+    loading.update = true
+    errors.update = false
+
+    const searchParams = [['userAccessKey', userAccessKey.value]]
+    const url = new URL(`${API_BASE_URL}/baskets/products`)
+    url.search = new URLSearchParams(searchParams)
+
+    try {
+      const [cartData] = await useFetchAll({
+        urls: [url],
+        method: 'DELETE',
+
+        body: { basketItemId: id }
+      })
+      cartItems.value = cartData.items
+    } catch (error) {
+      errors.update = true
+      console.log(error)
+    }
+
+    loading.update = false
+  }
+
+  async function updateCartItem(id, qty) {
+    loading.update = true
+    errors.update = false
+
+    const searchParams = [['userAccessKey', userAccessKey.value]]
+    const url = new URL(`${API_BASE_URL}/baskets/products`)
+    url.search = new URLSearchParams(searchParams)
+
+    try {
+      const [cartData] = await useFetchAll({
+        urls: [url],
+        method: 'PUT',
+
+        body: { basketItemId: id, quantity: qty }
+      })
+      cartItems.value = cartData.items
+    } catch (error) {
+      errors.update = true
+      console.log(error)
+    }
+
+    loading.update = false
   }
 
   return {
     cartItems,
-    isFetchingCart,
-    hasCartFetchingError,
-    isAddingProduct,
-    isProductAdded,
-    hasProductAddingError,
-    addItemToCart
+    loading,
+    errors,
+    isItemAdded,
+    addItemToCart,
+    deleteCartItem,
+    updateCartItem
   }
 })

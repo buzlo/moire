@@ -51,6 +51,8 @@
 .button-del {
   @include inpres;
 
+  cursor: pointer;
+
   width: 20px;
   height: 20px;
 }

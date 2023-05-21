@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useNumberFormat } from '../composables/useNumberFormat'
 import ColorsList from './ColorsList.vue'
 
-const props = defineProps({product: {type: Object, required: true}})
+const props = defineProps({ product: { type: Object, required: true } })
 
 const currentColor = ref(0)
 const currentImg = computed(() => {
@@ -24,7 +24,9 @@ const currentImg = computed(() => {
     </RouterLink>
 
     <h3 class="catalog__title">
-      <RouterLink :to="{ name: 'item', params: { id: product.id } }" href="#"> {{ product.title }} </RouterLink>
+      <RouterLink :to="{ name: 'item', params: { id: product.id } }" href="#">
+        {{ product.title }}
+      </RouterLink>
     </h3>
 
     <span class="catalog__price"> {{ useNumberFormat(product.price) }} ₽ </span>

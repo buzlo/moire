@@ -42,7 +42,7 @@ const maxPrice = computed(() => {
   <div v-if="filterStore.isFetching">Загрузка фильтра...</div>
   <div v-else-if="filterStore.hasFetchingError">
     <p>При загрузке фильтра произошла ошибка.</p>
-    <button class="button button--primary" @click.prevent="getFilterData()">
+    <button class="button button--primary" @click.prevent="filterStore.getFilterData()">
       Попробовать<br />ещё раз
     </button>
   </div>
