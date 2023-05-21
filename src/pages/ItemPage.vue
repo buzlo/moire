@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { vMaska } from 'maska'
 
 import ColorsList from '../components/ColorsList.vue'
 import ItemInfoTab from '../components/ItemInfoTab.vue'
@@ -12,6 +11,7 @@ import { API_BASE_URL } from '../config'
 import { useCartStore } from '../stores/CartStore'
 import { useFetchAll } from '../composables/useFetchAll'
 import { useNumberFormat } from '../composables/useNumberFormat'
+import BaseCounter from '../components/BaseCounter.vue'
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -139,38 +139,7 @@ function setZoomedInPic(index) {
           <div class="item__form">
             <form class="form" action="#" method="POST">
               <div class="item__row item__row--center">
-                <div class="form__counter">
-                  <button
-                    type="button"
-                    aria-label="Убрать один товар"
-                    :disabled="pickedData.quantity === 1"
-                    @click="pickedData.quantity -= 1"
-                  >
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-minus"></use>
-                    </svg>
-                  </button>
-
-                  <input
-                    v-model.number="pickedData.quantity"
-                    v-maska
-                    data-maska="d"
-                    data-maska-tokens="d:\d:multiple"
-                    type="text"
-                    name="count"
-                  />
-
-                  <button
-                    type="button"
-                    aria-label="Добавить один товар"
-                    @click="pickedData.quantity += 1"
-                  >
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-plus"></use>
-                    </svg>
-                  </button>
-                </div>
-
+                <BaseCounter v-model="pickedData.quantity"></BaseCounter>
                 <b class="item__price"> {{ useNumberFormat(product.price) }} ₽ </b>
               </div>
 
